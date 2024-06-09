@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import { getGymEquipment, createGymEquipment } from "../repositories/equipmentRepository";
 import { GymEquipment as Equipment } from "../types/GymEquipment";
 import { ActivityType } from "../types/GymEquipment";
+import QRCode from "react-qr-code";
+import EmptyState from "./EmptyState";
 
 const GymEquipment: React.FC = () => {
   const [equipmentList, setEquipmentList] = useState<Equipment[]>([]);
@@ -18,8 +20,22 @@ const GymEquipment: React.FC = () => {
     [newEquipment]
   );
 
+  const [query, setQuery] = useState("");
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchEquipment = async () => {
+      try {
+        const equipment = await getGymEquipment(query);
+        setEquipmentList(equipment);
+      } catch (error: any) {
+        setError(error.message);
+      }
+    };
+
+    fetchEquipment();
+  }, [query]);
 
   useEffect(() => {
     const fetchEquipment = async () => {
@@ -37,6 +53,10 @@ const GymEquipment: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setNewEquipment({ ...newEquipment, [id]: value });
+  };
+
+  const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,14 +83,14 @@ const GymEquipment: React.FC = () => {
       {error && <p className="text-red-500">{error}</p>}
       {!isFormVisible && (
         <button
-          className="px-4 mb-4 bg-primary-light text-primary-on py-2 rounded hover:bg-primary-container hover:text-surface-on"
+          className="px-4 mb-1 ms-4 bg-primary-light text-primary-on py-2 rounded hover:bg-primary-container hover:text-surface-on"
           onClick={() => setIsFormVisible(!isFormVisible)}
         >
           Add Equipment
         </button>
       )}
       {isFormVisible && (
-        <div className=" bg-surface-light m-4 p-4 rounded-lg border-2 border-primary-light">
+        <div className="bg-surface-light m-4 p-4 rounded-lg border-2 border-primary-light">
           <form onSubmit={handleSubmit} className="mb-4">
             <div className="mb-2 text-left">
               <input
@@ -79,7 +99,7 @@ const GymEquipment: React.FC = () => {
                 value={newEquipment.name}
                 onChange={handleInputChange}
                 placeholder="Name"
-                className="border p-2 mb-2 w-full"
+                className="border p-2 mb-2 w-full rounded focus:outline-primary-light"
               />
             </div>
             <div className="mb-2 text-left">
@@ -89,7 +109,7 @@ const GymEquipment: React.FC = () => {
                 value={newEquipment.imageUrl}
                 onChange={handleInputChange}
                 placeholder="Image URL"
-                className="border p-2 mb-2 w-full"
+                className="border p-2 mb-2 w-full rounded focus:outline-primary-light"
               />
             </div>
             <div className="mb-2 text-left">
@@ -99,7 +119,7 @@ const GymEquipment: React.FC = () => {
                 value={newEquipment.videoUrl}
                 onChange={handleInputChange}
                 placeholder="Video URL"
-                className="border p-2 mb-2 w-full"
+                className="border p-2 mb-2 w-full rounded focus:outline-primary-light"
               />
             </div>
             <div className="text-left">
@@ -109,7 +129,7 @@ const GymEquipment: React.FC = () => {
                 value={newEquipment.description}
                 onChange={handleInputChange}
                 placeholder="Description"
-                className="border p-2 mb-2 w-full"
+                className="border p-2 mb-2 w-full rounded focus:outline-primary-light"
               ></textarea>
             </div>
             <div className="mb-4 text-left">
@@ -146,18 +166,47 @@ const GymEquipment: React.FC = () => {
           </form>
         </div>
       )}
+      <div className="m-4">
+        <input
+          type="text"
+          placeholder="Search equipment..."
+          value={query}
+          onChange={handleQueryChange}
+          className="border p-2 mb-2 w-full rounded focus:outline-primary-light"
+        />
+      </div>
       {equipmentList.length === 0 ? (
-        <p>No equipment found.</p>
+        <EmptyState text="No equipment found." />
       ) : (
         <ul>
           {equipmentList.map((equipment) => (
-            <li key={equipment.id} className="border p-2 mb-2 bg-surface-container-low">
-              <h4 className="font-bold">{equipment.name}</h4>
-              <img src={equipment.imageUrl} alt={equipment.name} className="w-32 h-32 object-cover" />
-              <p>{equipment.description}</p>
-              <a href={equipment.videoUrl} target="_blank" rel="noopener noreferrer" className="text-tertiary-light">
-                Video
-              </a>
+            <li key={equipment.id} className="bg-surface-light m-4 p-4 rounded-xl border-2 border-primary-light">
+              <h4 className="font-bold text-xl mb-4">{equipment.name}</h4>
+              <div className="flex space-x-4">
+                <img
+                  src={equipment.imageUrl}
+                  alt={equipment.name}
+                  className="w-48 h-48 object-cover border-2 rounded-xl border-primary-light"
+                />
+                <p className="flex-grow text-lg max-h-48 text-ellipsis overflow-clip">{equipment.description}</p>
+                <div className="flex items-center">
+                  <div className="w-28 h-28 bg-white p-1 flex-shrink-0">
+                    <QRCode className="w-full h-auto" value={"activity_tracker://gym_equipment/" + equipment.id} />
+                  </div>
+                </div>
+              </div>
+              {equipment.videoUrl && (
+                <div className=" mt-2">
+                  <a
+                    href={equipment.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-tertiary-light hover:underline"
+                  >
+                    Open video
+                  </a>
+                </div>
+              )}
             </li>
           ))}
         </ul>

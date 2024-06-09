@@ -3,9 +3,9 @@ import axios from "axios";
 import api from "../services/api";
 import { ErrorResponse } from "../types/Network";
 
-export const getGymEquipment = async (): Promise<GymEquipment[]> => {
+export const getGymEquipment = async (query?: string): Promise<GymEquipment[]> => {
   try {
-    const response = await api.get<GymEquipment[]>("/equipment");
+    const response = await api.get<GymEquipment[]>("/equipment", query ? { params: { q: query } } : undefined);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
