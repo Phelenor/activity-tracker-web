@@ -2,7 +2,7 @@ export interface GymEquipment {
   id: string;
   name: string;
   imageUrl: string;
-  videoUrl: string;
+  videoUrl: string | undefined;
   description: string;
   activityType: ActivityType;
 }

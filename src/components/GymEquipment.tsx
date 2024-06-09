@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { getGymEquipment, createGymEquipment } from "../repositories/equipmentRepository";
 import { GymEquipment as Equipment } from "../types/GymEquipment";
 import { ActivityType } from "../types/GymEquipment";
@@ -8,10 +8,15 @@ const GymEquipment: React.FC = () => {
   const [newEquipment, setNewEquipment] = useState<Omit<Equipment, "id">>({
     name: "",
     imageUrl: "",
-    videoUrl: "",
+    videoUrl: undefined,
     description: "",
     activityType: ActivityType.OTHER,
   });
+
+  const canAddEquipment = useMemo(
+    () => newEquipment.name.length > 0 && newEquipment.description.length > 0 && newEquipment.imageUrl.length > 0,
+    [newEquipment]
+  );
 
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [error, setError] = useState("");
@@ -126,7 +131,8 @@ const GymEquipment: React.FC = () => {
             <div>
               <button
                 type="submit"
-                className="px-4 bg-primary-light text-primary-on py-2 rounded hover:bg-primary-container hover:text-surface-on"
+                disabled={!canAddEquipment}
+                className="px-4 bg-primary-light text-primary-on py-2 rounded hover:bg-primary-container hover:text-surface-on disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Add Equipment
               </button>
