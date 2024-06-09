@@ -1,17 +1,8 @@
 import axios from "axios";
 import api from "../services/api";
-import { GymAccount } from "../types/GymAccount";
 import { setUserToken } from "../utils/token";
 import { sha256 } from "js-sha256";
-
-interface LoginResponse {
-  gymAccount: GymAccount;
-  accessToken: string;
-}
-
-interface ErrorResponse {
-  message: string;
-}
+import { ErrorResponse, LoginResponse } from "../types/Network";
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   let passwordHash = sha256.hmac("rafaelova-tajna-tajna", password);

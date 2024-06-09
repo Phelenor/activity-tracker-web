@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import GymEquipmentAdmin from "./components/GymEquipmentAdmin";
+import GymEquipment from "./components/GymEquipment";
 import Dashboard from "./components/Dashboard";
 import Header from "./components/Header";
 import { useAuth } from "./contexts/AuthContext";
@@ -16,7 +16,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/login" element={isAuthenticated ? <Navigate to="/admin" /> : <Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/admin" element={isAuthenticated ? <GymEquipmentAdmin /> : <Navigate to="/login" />} />
+        <Route path="/admin" element={isAuthenticated ? <GymEquipment /> : <Navigate to="/login" />} />
         <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/" element={<Navigate to={isAuthenticated ? "/admin" : "/login"} />} />
       </Routes>
