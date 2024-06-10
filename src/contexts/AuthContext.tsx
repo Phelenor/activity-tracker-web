@@ -1,7 +1,8 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
-import { getUserToken, removeUserToken, setUserToken } from "../utils/token";
+import { getUserToken, removeUserId, removeUserToken, setUserToken } from "../utils/token";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { resetApi } from "../services/api";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -17,8 +18,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     const token = getUserToken();
-
-    console.log(token);
 
     if (token) {
       let decodedToken = jwtDecode(token);
@@ -36,12 +35,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = (token: string) => {
     setUserToken(token);
     setIsAuthenticated(true);
+    resetApi();
     navigate("/admin");
   };
 
   const logout = () => {
     removeUserToken();
+    removeUserId();
     setIsAuthenticated(false);
+    resetApi();
     navigate("/login");
   };
 

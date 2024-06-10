@@ -1,6 +1,6 @@
 import axios from "axios";
 import api from "../services/api";
-import { setUserToken } from "../utils/token";
+import { setUserId, setUserToken } from "../utils/token";
 import { sha256 } from "js-sha256";
 import { ErrorResponse, LoginResponse } from "../types/Network";
 
@@ -10,6 +10,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
   try {
     const response = await api.post<LoginResponse>("/login", { email, passwordHash });
     setUserToken(response.data.accessToken);
+    setUserId(response.data.gymAccount.id);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {

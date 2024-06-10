@@ -37,19 +37,6 @@ const GymEquipment: React.FC = () => {
     fetchEquipment();
   }, [query]);
 
-  useEffect(() => {
-    const fetchEquipment = async () => {
-      try {
-        const equipment = await getGymEquipment();
-        setEquipmentList(equipment);
-      } catch (error: any) {
-        setError(error.message);
-      }
-    };
-
-    fetchEquipment();
-  }, []);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setNewEquipment({ ...newEquipment, [id]: value });

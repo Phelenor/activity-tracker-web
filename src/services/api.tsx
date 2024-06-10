@@ -9,4 +9,8 @@ const api = axios.create({
   },
 });
 
+export function resetApi(){
+  api.defaults.headers["Authorization"] = "Bearer " + getUserToken() ?? "";
+}
+
 export default api;
