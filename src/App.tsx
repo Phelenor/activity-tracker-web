@@ -8,7 +8,7 @@ import Header from "./components/Header";
 import { useAuth } from "./contexts/AuthContext";
 import { getUserId } from "./utils/token";
 
-const App: React.FC = () => {
+const App: React.FC = () => {  
   const { isAuthenticated } = useAuth();
 
   return (

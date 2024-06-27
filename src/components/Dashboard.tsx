@@ -3,6 +3,7 @@ import { GymDataSnapshot } from "../types/GymDataSnapshot";
 import { GymEquipmentFinish } from "../types/GymEquipmentFinish";
 import { formatTime } from "../utils/time_format";
 import EmptyState from "./EmptyState";
+import UserProfileImage from "./UserImage";
 
 const Dashboard: React.FC<{ userId: string }> = ({ userId }) => {
   const [data, setData] = useState<GymDataSnapshot[]>([]);
@@ -47,53 +48,53 @@ const Dashboard: React.FC<{ userId: string }> = ({ userId }) => {
       {data.length === 0 ? (
         <EmptyState text="No exercisers connected." />
       ) : (
-      <div className="grid grid-cols-4 gap-4">
-        {data.map((item) => (
-          <div key={item.equipmentId} className="p-4 bg-white rounded-xl shadow-md border-2 border-primary-light">
-            <div className="flex items-center mb-4">
-              <img src={item.userImageUrl} alt={item.userName} className="w-16 h-16 rounded-full mr-4" />
-              <div>
-                <h2 className="text-xl font-bold">{item.userName}</h2>
-                <p className="text-sm text-gray-600">
-                  <strong>On:</strong> {item.equipmentName}
+        <div className="grid grid-cols-4 gap-4">
+          {data.map((item) => (
+            <div key={item.equipmentId} className="p-4 bg-white rounded-xl shadow-md border-2 border-primary-light">
+              <div className="flex items-center mb-4">
+                <UserProfileImage userImageUrl={item.userImageUrl} userName={item.userName} />
+                <div>
+                  <h2 className="text-xl font-bold">{item.userName}</h2>
+                  <p className="text-sm text-gray-600">
+                    <strong>On:</strong> {item.equipmentName}
+                  </p>
+                </div>
+              </div>
+              <div className="text-gray-800">
+                <p>
+                  <strong>Duration:</strong> {formatTime(item.duration)}
+                </p>
+                <p>
+                  <strong>Distance:</strong> {roundsToDecimals(item.distance / 1000.0, 2)} km
+                </p>
+                <p>
+                  <strong>Speed:</strong> {roundsToDecimals(item.speed, 1)} km/s
+                </p>
+                <p>
+                  <strong>Avg Speed:</strong> {roundsToDecimals(item.avgSpeed, 1)} km/s
+                </p>
+                <p>
+                  <strong>Max Speed:</strong> {roundsToDecimals(item.maxSpeed, 1)} km/s
+                </p>
+                <p>
+                  <strong>Heart Rate:</strong> {item.heartRate} bpm
+                </p>
+                <p>
+                  <strong>Avg Heart Rate:</strong> {item.avgHeartRate} bpm
+                </p>
+                <p>
+                  <strong>Max Heart Rate:</strong> {item.maxHeartRate} bpm
+                </p>
+                <p>
+                  <strong>Elevation Gain:</strong> {item.elevationGain} meters
+                </p>
+                <p>
+                  <strong>Calories:</strong> {item.calories} kcal
                 </p>
               </div>
             </div>
-            <div className="text-gray-800">
-              <p>
-                <strong>Duration:</strong> {formatTime(item.duration)}
-              </p>
-              <p>
-                <strong>Distance:</strong> {roundsToDecimals(item.distance / 1000.0, 2)} km
-              </p>
-              <p>
-                <strong>Speed:</strong> {roundsToDecimals(item.speed, 1)} km/s
-              </p>
-              <p>
-                <strong>Avg Speed:</strong> {roundsToDecimals(item.avgSpeed, 1)} km/s
-              </p>
-              <p>
-                <strong>Max Speed:</strong> {roundsToDecimals(item.maxSpeed, 1)} km/s
-              </p>
-              <p>
-                <strong>Heart Rate:</strong> {item.heartRate} bpm
-              </p>
-              <p>
-                <strong>Avg Heart Rate:</strong> {item.avgHeartRate} bpm
-              </p>
-              <p>
-                <strong>Max Heart Rate:</strong> {item.maxHeartRate} bpm
-              </p>
-              <p>
-                <strong>Elevation Gain:</strong> {item.elevationGain} meters
-              </p>
-              <p>
-                <strong>Calories:</strong> {item.calories} kcal
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
       )}
     </div>
   );
